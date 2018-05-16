@@ -86,7 +86,6 @@ export class ShaderImage {
 
         this.shader = createShader( this.gl, VERTEX_SHADER, this.fragment  );
         this.shader.attributes.position.location = 0
-        this.shader.uniforms.resolution = [ this.canvas.width, this.canvas.height ];
 
         this.render();
     }

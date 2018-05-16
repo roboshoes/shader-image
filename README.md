@@ -32,6 +32,15 @@ document.body.appendChild( image.domElement );
 
 ## Api
 
+`new ShaderImage( source, shader )` where `source` is either a `HTMLImageElement` or a `HTMLCanvasElement` and the
+`shader` is a string in form of `webgl` shader. This means it has to include a `void main()` method in which or
+subsequently from which the `gl_FragColor` is set.
+
+Within the shader, these extra values are accessable:
+
+- `vec4 getImagePixel()`: Returns a `vec4` of the current pixel in the fragment.
+- `vec2 uv`: The UV Coordinates of the current pixel.
+
 ### Fields
 - `domElement` Returns a `HTMLCanvasElement` in the size of the source image containing the shaded image.
 - `width` Returns the width of the content.
