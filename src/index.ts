@@ -32,7 +32,7 @@ export class ShaderImage {
     private shader?: ReturnType<typeof createShader>;
     private texture?: ReturnType<typeof createTexture>;
 
-    constructor( source: HTMLImageElement | HTMLCanvasElement, shader: string ) {
+    constructor( private readonly source: HTMLImageElement | HTMLCanvasElement, shader: string ) {
         this.canvas = document.createElement( "canvas" );
         this.gl = this.canvas.getContext( "webgl" )! || this.canvas.getContext( "experimental-webgl" )!;
         this.fragment = `${ FRAGMENT_PREPENDIX }\n${ shader }`;
@@ -40,7 +40,7 @@ export class ShaderImage {
         if ( source instanceof HTMLImageElement && !this.isComplete( source ) ) {
             source.onload = () => {
                 this.setup( source );
-            }
+            };
         } else {
             this.setup( source );
         }
@@ -58,22 +58,27 @@ export class ShaderImage {
         return this.canvas.height;
     }
 
-    render() {
+    update() {
+        // @types/gl-texture2d is missing the setPixels method
+        // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/25840
+        // tslint:disable-next-line:no-any
+        (this.texture as any).setPixels( this.source );
+
+        this.render();
+    }
+
+    dispose() {
+        if ( this.shader ) this.shader.dispose();
+        if ( this.texture ) this.texture.dispose();
+    }
+
+    private render() {
         if (!this.shader) return;
 
         this.shader.bind();
         this.shader.uniforms.image = this.texture;
 
         triangle( this.gl );
-    }
-
-    dispose() {
-        if (this.shader) this.shader.dispose();
-        if (this.texture) this.texture.dispose();
-    }
-
-    private isComplete( source: HTMLImageElement ): boolean {
-        return source.complete && source.naturalHeight !== 0 && source.naturalHeight !== 0;
     }
 
     private setup( source: HTMLImageElement | HTMLCanvasElement ) {
@@ -85,8 +90,12 @@ export class ShaderImage {
         this.texture = createTexture( this.gl, source );
 
         this.shader = createShader( this.gl, VERTEX_SHADER, this.fragment  );
-        this.shader.attributes.position.location = 0
+        this.shader.attributes.position.location = 0;
 
         this.render();
+    }
+
+    private isComplete( source: HTMLImageElement ): boolean {
+        return source.complete && source.naturalHeight !== 0 && source.naturalHeight !== 0;
     }
 }

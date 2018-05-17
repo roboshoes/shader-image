@@ -14,16 +14,16 @@ The shader is wrapped with the necessery definitions and functions to render the
 import { ShaderImage } from "shader-image";
 
 const source = new Image();
-source.src = "some/url.png"
+source.src = "some/url.png";
 
 // only render the red channel of the image.
 const shader = `
     void main() {
         vec4 pixel = getImagePixel();
 
-        gl_FragCoord = vec4( pixel.r, 0, 0, 1 );
+        gl_FragColor = vec4( pixel.r, 0, 0, 1 );
     }
-`
+`;
 
 const image = new ShaderImage( source, shader );
 
