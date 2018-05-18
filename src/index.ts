@@ -18,17 +18,30 @@ const FRAGMENT_PREPENDIX = `
     precision highp float;
 
     uniform sampler2D image;
+    uniform vec2 resolution;
     varying vec2 uv;
 
-    vec4 getImagePixel() {
+    vec4 getPixel() {
         return texture2D( image, uv );
+    }
+
+    vec4 getPixel( vec2 uv ) {
+        return texture2D( image, uv );
+    }
+
+    vec4 getPixelXY( vec2 coords ) {
+        return texture2D( image, coords / resolution );
     }
 `;
 
-export class ShaderImage {
+// tslint:disable-next-line:no-any Allowing all uniform types.
+export type UniformType = any;
+
+export class ImageShader {
     private readonly canvas: HTMLCanvasElement;
     private readonly gl: WebGLRenderingContext;
     private readonly fragment: string;
+    private readonly uniformCache: { [ key: string ]: UniformType } = {};
     private shader?: ReturnType<typeof createShader>;
     private texture?: ReturnType<typeof createTexture>;
 
@@ -58,11 +71,15 @@ export class ShaderImage {
         return this.canvas.height;
     }
 
+    get uniforms(): { [ key: string ]: UniformType } {
+        return this.uniformCache;
+    }
+
     update() {
         // @types/gl-texture2d is missing the setPixels method
         // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/25840
         // tslint:disable-next-line:no-any
-        (this.texture as any).setPixels( this.source );
+        ( this.texture as any ).setPixels( this.source );
 
         this.render();
     }
@@ -72,11 +89,16 @@ export class ShaderImage {
         if ( this.texture ) this.texture.dispose();
     }
 
-    private render() {
-        if (!this.shader) return;
+    render() {
+        if ( !this.shader ) return;
 
         this.shader.bind();
-        this.shader.uniforms.image = this.texture;
+
+        for ( const key in this.uniformCache ) {
+            if ( this.uniformCache.hasOwnProperty( key ) ) {
+                this.shader.uniforms[ key ] = this.uniformCache[ key ];
+            }
+        }
 
         triangle( this.gl );
     }
@@ -91,6 +113,9 @@ export class ShaderImage {
 
         this.shader = createShader( this.gl, VERTEX_SHADER, this.fragment  );
         this.shader.attributes.position.location = 0;
+
+        this.uniformCache.resolution = [ this.canvas.width, this.canvas.height ];
+        this.uniformCache.image = this.texture;
 
         this.render();
     }
