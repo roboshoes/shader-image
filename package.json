@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/a-big-triangle": "^1.0.0",
     "@types/gl-shader": "^4.2.0",
-    "@types/gl-texture2d": "^2.1.0",
+    "@types/gl-texture2d": "^2.1.1",
     "tsify": "^4.0.0",
     "tslint": "^5.10.0",
     "typescript": "^2.8.3",
