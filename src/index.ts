@@ -76,11 +76,9 @@ export class ImageShader {
     }
 
     update() {
-        // @types/gl-texture2d is missing the setPixels method
-        // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/25840
-        // tslint:disable-next-line:no-any
-        ( this.texture as any ).setPixels( this.source );
+        if  ( !this.texture ) return;
 
+        this.texture.setPixels( this.source );
         this.render();
     }
 
