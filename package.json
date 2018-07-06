@@ -1,12 +1,13 @@
 {
   "name": "image-shader",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "Run WebGL shaders on an image or canvas.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc --p tsconfig.json",
-    "dev": "watchify test/index.ts -p [ tsify ] -v -o dist/test/bundle.js"
+    "dev": "watchify test/index.ts -p [ tsify ] -v -o dist/test/bundle.js",
+    "push": "npm run build && npm publish"
   },
   "keywords": [
     "shader",

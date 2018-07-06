@@ -12,7 +12,7 @@ well as a fragment shader.
 The shader is wrapped with the necessery definitions and functions to render the image.
 
 ```js
-import { ShaderImage } from "shader-image";
+import { ImageShader } from "image-shader";
 
 const source = new Image();
 source.src = "some/url.png";
@@ -34,7 +34,7 @@ document.body.appendChild( image.domElement );
 ## Api
 
 ### Constructor
-`new ShaderImage( source, shader )` where `source` is either a `HTMLImageElement` or a `HTMLCanvasElement` and the
+`new ImageShader( source, shader )` where `source` is either a `HTMLImageElement` or a `HTMLCanvasElement` and the
 `shader` is a string in form of `webgl` shader. This means it has to include a `void main()` method in which or
 subsequently from which the `gl_FragColor` is set.
 
